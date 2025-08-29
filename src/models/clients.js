@@ -12,7 +12,7 @@ const Clients  = db.define(
             type: DataTypes.STRING(50),
             allowNull: true
         },
-        flastName: {
+        lastName: {
             type: DataTypes.STRING(50),
             allowNull: false
         },
@@ -25,7 +25,7 @@ const Clients  = db.define(
             allowNull: true
         },
         licenseNumber: {
-            type: DataTypes.STRING(50),
+            type: DataTypes.STRING(15),
             allowNull: false
         },
         gender: {
