@@ -4,6 +4,7 @@ require('dotenv').config();
 
 // Models
 const Clients = require('./models/clients');
+const Employees = require('./models/employees');
 
 // Database
 const db = require('./configuration/db')
@@ -11,7 +12,10 @@ db.authenticate().then(async() => {
     console.log('Database connected');
     await Clients.sync().then(() => {
         console.log('Clients table created');
-    })
+    });
+    await Employees.sync().then(() => {
+        console.log('Employees table created');
+    });
 })
 .catch((error) => {
     console.log(error);
@@ -25,6 +29,7 @@ app.use(express.json());
 //Routes
 
 app.use('/api/clients', require('./routes/route_clients.js'));
+app.use('/api/employees', require('./routes/route_employees.js'));
 
 //Port
 app.listen(app.get('port'), () => {
