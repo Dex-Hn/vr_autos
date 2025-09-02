@@ -1,20 +1,18 @@
 const { validationResult } = require('express-validator');
 const argon2 = require('argon2');
 const Users = require("../models/users");
-const Employees = require("../models/employees");
+const Employees = require('../models/employees');
 
 exports.list = async (req, res) => {
     try {
-        const employees = await Employees.findAll({
+        const list = await Employees.findAll({
             include: [{
                 model: Users,
-                attributes: ['username', 'email']
             }]
         });
-        res.json(employees);
+        res.json(list);
     } catch (error) {
-        console.error("Error fetching employees:", error);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -35,37 +33,31 @@ exports.create = async (req, res) => {
             }
             const newUsers = await Users.create({...usersData});
             const newEmployee = await Employees.create({...req.body, userId: newUsers.id});
-
-            // const newEmployee = await Employees.create(req.body);
-            res.status(201).json({ message: "Employee created successfully" });
+            res.status(201).json({ message: "User created successfully" });
         } catch (error) {
-            console.error("Error creating employee:", error);
-            res.status(500).json({ error: "Internal server error" });
+            console.error("Error creating user:", error);
+            res.status(500).json({ message: error.message });
         }
     }
 };
 
 exports.update = async (req, res) => {
-    const { id } = req.query;
     const validation = validationResult(req);
     if (!validation.isEmpty()) {
         console.log(validation.errors);
         return res.status(400).json(validation.errors);
     }
-    try {
-        const updated = await Employees.update(req.body, {
-            where: { id }
-        });
-        if (updated) {
-            const updatedEmployee = await Employees.findOne({ where: { id } });
-            return res.status(200).json(updatedEmployee);
+    else {
+        try {
+            const { id } = req.query;
+            const update = await Employees.update({ ...req.body }, { where: { id } });
+            res.json({ message: "Employee updated successfully" });
+        } catch (error) {
+            console.error("Error updating employee:", error);
+            res.status(500).json({ message: error.message });
         }
-        throw new Error("Employee not found");
-    } catch (error) {
-        console.error("Error updating employee:", error);
-        res.status(500).json({ error: "Internal server error" });
     }
-};
+}
 
 exports.delete = async (req, res) => {
     const { id } = req.query;
@@ -88,3 +80,7 @@ exports.delete = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+exports.error = async (req, res) => {
+    res.json({msj: 'Error en la autenticación'});
+}

@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../configuration/db');
+const Users = require('./users');
 
 const Employees  = db.define(
     'Employees',
@@ -50,6 +51,10 @@ const Employees  = db.define(
         timestamps: true
     }
 );
+
+// Relationships
+Users.hasMany(Employees, { foreignKey: 'userId' });
+Employees.belongsTo(Users, { foreignKey: 'userId' });
 
 module.exports = Employees;
 
